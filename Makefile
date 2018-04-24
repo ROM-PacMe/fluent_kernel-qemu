@@ -10,7 +10,8 @@ assembly_object_files := $(patsubst arch/$(arch)/%.asm, \
 
 .PHONY: all clean run iso
 
-all: $(kernel)
+all: $(iso)
+	@qemu-system-x86_64 -cdrom $(iso)
 
 clean:
 	@rm -r build
