@@ -1,1 +1,5 @@
-#Fluent ARCH x86_64 micro operating system
+# FluentOS Modular (Multiarch) microOS
+
+DOCUMENTATION:
+
+    - Coming Soon
