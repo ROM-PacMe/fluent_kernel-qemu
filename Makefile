@@ -2,10 +2,10 @@ arch ?= $(archi)
 kernel := build/fluentKernel-$(arch).bin
 iso := build/FluentOS-$(arch)-alpha.iso
 
-linker_script := arch/$(arch)/linker.ld
-grub_cfg := tools/grub/grub.cfg
-assembly_source_files := $(wildcard arch/$(arch)/*.asm)
-assembly_object_files := $(patsubst arch/$(arch)/%.asm, \
+linker_script := kernel/arch/$(arch)/linker.ld
+grub_cfg := system/tools/grub/grub.cfg
+assembly_source_files := $(wildcard kernel/arch/$(arch)/*.asm)
+assembly_object_files := $(patsubst kernel/arch/$(arch)/%.asm, \
     build/arch/$(arch)/%.o, $(assembly_source_files))
 
 .PHONY: all clean run iso help
