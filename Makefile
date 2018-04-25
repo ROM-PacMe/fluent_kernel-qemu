@@ -1,5 +1,5 @@
 arch ?= $(archi)
-kernel := build/fluentKernel-$(arch).bin
+kernel := build/fluentKernel.bin
 iso := build/FluentOS-$(arch)-alpha.iso
 
 linker_script := kernel/arch/$(arch)/linker.ld
@@ -11,13 +11,13 @@ assembly_object_files := $(patsubst kernel/arch/$(arch)/%.asm, \
 .PHONY: all clean run iso help
 
 all: $(iso)
-	@qemu-system-$(archi) -cdrom $(iso)
+	@qemu-system-x86_64 -cdrom $(iso)
 
 clean:
 	@rm -r build
 
 run: $(iso)
-	@qemu-system-$(archi) -cdrom $(iso)
+	@qemu-system-x86_64 -cdrom $(iso)
 
 iso: $(iso)
 
@@ -35,6 +35,6 @@ $(kernel): $(assembly_object_files) $(linker_script)
 	@ld -n -T $(linker_script) -o $(kernel) $(assembly_object_files)
 
 # compile assembly files
-build/arch/$(arch)/%.o: arch/$(arch)/%.asm	
+build/arch/$(arch)/%.o: kernel/arch/$(arch)/%.asm	
 	@mkdir -p $(shell dirname $@)
 	@nasm -felf64 $< -o $@
