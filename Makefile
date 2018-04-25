@@ -1,23 +1,23 @@
-arch ?= x86_64
+arch ?= $(archi)
 kernel := build/fluentKernel-$(arch).bin
 iso := build/FluentOS-$(arch)-alpha.iso
 
 linker_script := arch/$(arch)/linker.ld
-grub_cfg := arch/$(arch)/grub/grub.cfg
+grub_cfg := tools/grub/grub.cfg
 assembly_source_files := $(wildcard arch/$(arch)/*.asm)
 assembly_object_files := $(patsubst arch/$(arch)/%.asm, \
     build/arch/$(arch)/%.o, $(assembly_source_files))
 
-.PHONY: all clean run iso
+.PHONY: all clean run iso help
 
 all: $(iso)
-	@qemu-system-x86_64 -cdrom $(iso)
+	@qemu-system-$(archi) -cdrom $(iso)
 
 clean:
 	@rm -r build
 
 run: $(iso)
-	@qemu-system-x86_64 -cdrom $(iso)
+	@qemu-system-$(archi) -cdrom $(iso)
 
 iso: $(iso)
 
@@ -27,6 +27,9 @@ $(iso): $(kernel) $(grub_cfg)
 	@cp $(grub_cfg) build/isofiles/boot/grub
 	@grub-mkrescue -o $(iso) build/isofiles 2> /dev/null
 	@rm -r build/isofiles
+
+help:
+	@echo "test"
 
 $(kernel): $(assembly_object_files) $(linker_script)
 	@ld -n -T $(linker_script) -o $(kernel) $(assembly_object_files)
