@@ -34,6 +34,20 @@ stack_bottom:
     resb 64
 stack_top:
 
+set_up_page_tables:
+    ; map first P4 entry to P3 table
+    mov eax, p3_table
+    or eax, 0b11 ; present + writable
+    mov [p4_table], eax
+
+    ; map first P3 entry to P2 table
+    mov eax, p2_table
+    or eax, 0b11 ; present + writable
+    mov [p3_table], eax
+
+    ; TODO map each P2 entry to a huge 2MiB page
+    ret
+
 check_multiboot:
     cmp eax, 0x36d76289
     jne .no_multiboot
