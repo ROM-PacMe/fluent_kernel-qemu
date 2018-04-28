@@ -10,6 +10,9 @@ start:
     call check_cpuid
     call check_long_mode
 
+    call set_up_page_tables 
+    call enable_paging     
+
     ; print `OK` to screen
     mov dword [0xb8000], 0x2f4b2f4f
 
