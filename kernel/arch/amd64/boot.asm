@@ -72,6 +72,29 @@ check_multiboot:
     mov al, "0"
     jmp error
 
+enable_paging:
+    ; load P4 to cr3 register (cpu uses this to access the P4 table)
+    mov eax, p4_table
+    mov cr3, eax
+
+    ; enable PAE-flag in cr4 (Physical Address Extension)
+    mov eax, cr4
+    or eax, 1 << 5
+    mov cr4, eax
+
+    ; set the long mode bit in the EFER MSR (model specific register)
+    mov ecx, 0xC0000080
+    rdmsr
+    or eax, 1 << 8
+    wrmsr
+
+    ; enable paging in the cr0 register
+    mov eax, cr0
+    or eax, 1 << 31
+    mov cr0, eax
+
+    ret
+
 check_cpuid:
     ; Check if CPUID is supported by attempting to flip the ID bit (bit 21)
     ; in the FLAGS register. If we can flip it, CPUID is available.
