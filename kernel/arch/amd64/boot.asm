@@ -1,5 +1,5 @@
 global start
-
+extern long_mode_start
 section .text
 bits 32
 start:
@@ -9,6 +9,13 @@ start:
     call check_multiboot
     call check_cpuid
     call check_long_mode
+
+    call enable_paging
+
+    ; load the 64-bit GDT
+    lgdt [gdt64.pointer]
+
+    jmp gdt64.code:long_mode_start
 
     call set_up_page_tables 
     call enable_paging     
@@ -23,7 +30,6 @@ error:
     mov dword [0xb8004], 0x4f3a4f52
     mov dword [0xb8008], 0x4f204f20
     mov byte  [0xb800a], al
-    hlt
 
 section .bss
 align 4096
@@ -151,3 +157,11 @@ check_long_mode:
     mov al, "2"
     jmp error
 
+section .rodata
+gdt64:
+    dq 0 ; zero entry
+.code: equ $ - gdt64 ; new
+    dq (1<<43) | (1<<44) | (1<<47) | (1<<53) ; code segment
+.pointer:
+    dw $ - gdt64 - 1
+    dq gdt64
